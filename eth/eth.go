@@ -2,6 +2,7 @@ package eth
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -22,6 +23,9 @@ func NewChainID(chainID *hexutil.Big) *ChainID {
 }
 
 func (e *ChainID) ChainId() *hexutil.Big { //nolint:stylecheck
+	telemetry.IncrCounter(1, "eth", "chain_id")
+	defer telemetry.MeasureSince(telemetry.Now(), "eth", "chain_id") // TODO: should duration be removed for chain_id since it's just pulling a field?
+
 	return e.chainID
 }
 
@@ -36,6 +40,9 @@ func NewBlock(blockStore store.BlockStoreReader) *Block {
 }
 
 func (e *Block) GetBlockByNumber(id BlockID, inclTx bool) (map[string]any, error) {
+	telemetry.IncrCounter(1, "eth", "get_block_by_number")
+	defer telemetry.MeasureSince(telemetry.Now(), "eth", "get_block_by_number")
+
 	b := id.Get(e.blockStore)
 	if b == nil {
 		return nil, ethereum.NotFound
@@ -48,6 +55,9 @@ func (e *Block) GetBlockByNumber(id BlockID, inclTx bool) (map[string]any, error
 }
 
 func (e *Block) GetBlockByHash(hash common.Hash, inclTx bool) (map[string]any, error) {
+	telemetry.IncrCounter(1, "eth", "get_block_by_hash")
+	defer telemetry.MeasureSince(telemetry.Now(), "eth", "get_block_by_hash")
+
 	block := e.blockStore.BlockByHash(hash)
 	if block == nil {
 		return nil, ethereum.NotFound

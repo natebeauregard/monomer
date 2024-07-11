@@ -14,6 +14,7 @@ import (
 	jsonrpctypes "github.com/cometbft/cometbft/rpc/jsonrpc/types"
 	bfttypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/polymerdao/monomer"
 	"github.com/polymerdao/monomer/app/peptide/store"
@@ -43,18 +44,10 @@ type Node struct {
 	txdb           cometdb.DB
 	mempooldb      dbm.DB
 	eventListener  EventListener
+	metrics        *telemetry.Metrics
 }
 
-func New(
-	app monomer.Application,
-	g *genesis.Genesis,
-	engineWS net.Listener,
-	cometHTTPAndWS net.Listener,
-	blockdb,
-	mempooldb dbm.DB,
-	txdb cometdb.DB,
-	eventListener EventListener,
-) *Node {
+func New(app monomer.Application, g *genesis.Genesis, engineWS, cometHTTPAndWS net.Listener, blockdb, mempooldb dbm.DB, txdb cometdb.DB, eventListener EventListener, metrics *telemetry.Metrics) *Node {
 	return &Node{
 		app:            app,
 		genesis:        g,
@@ -64,6 +57,7 @@ func New(
 		txdb:           txdb,
 		mempooldb:      mempooldb,
 		eventListener:  eventListener,
+		metrics:        metrics,
 	}
 }
 
@@ -161,6 +155,12 @@ func (n *Node) Run(ctx context.Context, env *environment.Env) error {
 			n.eventListener.OnCometServeErr(fmt.Errorf("run comet server: %v", err))
 		}
 	})
+
+	if n.metrics != nil {
+		if err := n.registerMetrics(ctx, env); err != nil {
+			return fmt.Errorf("register metrics: %v", err)
+		}
+	}
 
 	return nil
 }

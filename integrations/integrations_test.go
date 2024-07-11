@@ -3,6 +3,7 @@ package integrations
 import (
 	"context"
 	"io"
+	"net/http"
 	stdURL "net/url"
 	"path/filepath"
 	"strings"
@@ -57,6 +58,8 @@ func TestStartCommandHandler(t *testing.T) {
 	svrCtx.Viper.Set("minimum-gas-prices", "0.025stake")
 	// This flag must be set to configure Monomer's Engine Websocket
 	viper.Set(monomerEngineWSFlag, "127.0.0.1:8089")
+	// Enable metrics for testing TODO: move into separate test
+	svrCtx.Viper.Set("telemetry.enabled", true)
 
 	clientCtx := client.Context{}
 	inProcessConsensus := true
@@ -94,6 +97,21 @@ func TestStartCommandHandler(t *testing.T) {
 	require.Equal(t, abcitypes.CodeTypeOK, putTx.Code, "put.Code is not OK")
 	require.EqualValues(t, bftTx.Hash(), putTx.Hash, "put.Hash is not equal to bftTx.Hash")
 	t.Log("Monomer Tx broadcasted successfully", "txHash", putTx.Hash)
+
+	// TODO: remove from this test or add to a separate test - testing purposes only
+	//resp, err := http.Get("http://127.0.0.1:26660/metrics")
+	resp, err := http.Get("http://127.0.0.1:8892/metrics")
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	respBodyBz, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	defer func() {
+		require.NoError(t, resp.Body.Close())
+	}()
+	// should we use json unmarshalling for the resp body here instead?
+	respBody := string(respBodyBz)
+	t.Log("Monomer metrics response: ", respBody)
+	require.Contains(t, respBody, "comet.broadcast_tx")
 
 	sigCh <- syscall.SIGINT
 }

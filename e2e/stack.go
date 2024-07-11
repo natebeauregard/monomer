@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	"io"
 	"net"
 	"os"
@@ -239,6 +240,10 @@ func (s *Stack) runMonomer(ctx context.Context, env *environment.Env, genesisTim
 	env.DeferErr("close tx db", txdb.Close)
 	mempooldb := dbm.NewMemDB()
 	env.DeferErr("close mempool db", mempooldb.Close)
+	metrics, err := telemetry.New(telemetry.Config{Enabled: true})
+	if err != nil {
+		return fmt.Errorf("set up metrics: %v", err)
+	}
 	n := node.New(
 		app,
 		&genesis.Genesis{
@@ -252,6 +257,7 @@ func (s *Stack) runMonomer(ctx context.Context, env *environment.Env, genesisTim
 		mempooldb,
 		txdb,
 		s.eventListener,
+		metrics,
 	)
 	if err := n.Run(ctx, env); err != nil {
 		return fmt.Errorf("run monomer: %v", err)

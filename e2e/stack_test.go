@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -154,6 +155,28 @@ func TestE2E(t *testing.T) {
 		}
 	}
 	t.Log("Monomer blocks contain the l1 attributes deposit tx")
+
+	//fmt.Printf("block %d built with %d txs\n", block.Header.Height, len(txs))
+
+	// TODO: remove from this test or add to a separate test - testing purposes only
+	//resp, err := http.Get("http://127.0.0.1:26660/metrics")
+	resp, err := http.Get("http://127.0.0.1:8892/metrics")
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	respBodyBz, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	defer func() {
+		require.NoError(t, resp.Body.Close())
+	}()
+	// should we use json unmarshalling for the resp body here instead?
+	respBody := string(respBodyBz)
+	t.Log("Monomer metrics response: ", respBody)
+	require.Contains(t, respBody, "engine.forkchoice_updated_v3")
+	require.Contains(t, respBody, "engine.get_payload_v3")
+	require.Contains(t, respBody, "engine.new_payload_v3")
+	require.Contains(t, respBody, "eth.get_block_by_number")
+	require.Contains(t, respBody, "eth.get_block_by_hash")
+	require.Contains(t, respBody, "eth.chain_id")
 }
 
 func newURL(t *testing.T, address string) *e2eurl.URL {

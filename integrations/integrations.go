@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	"io"
 	"net"
 	"os"
@@ -66,12 +67,17 @@ func StartCommandHandler(
 		return fmt.Errorf("start application: %v", err)
 	}
 
+	metrics, err := startTelemetry(svrCfg)
+	if err != nil {
+		return fmt.Errorf("start telemetry: %v", err)
+	}
+
 	monomerCtx, cancel := context.WithCancel(context.Background())
 	env.Defer(cancel)
 
 	// Would usually start a Comet node in-process here, but we replace the
 	// Comet node with a Monomer node.
-	if err := startInProcess(env, svrCtx, &clientCtx, monomerCtx, app, opts); err != nil {
+	if err := startInProcess(env, svrCtx, &clientCtx, monomerCtx, app, metrics, opts); err != nil {
 		return fmt.Errorf("start Monomer node in-process: %v", err)
 	}
 
@@ -121,12 +127,13 @@ func startInProcess(
 	clientCtx *client.Context,
 	monomerCtx context.Context,
 	app servertypes.Application,
+	metrics *telemetry.Metrics,
 	opts server.StartCmdOptions,
 ) error {
 	svrCtx.Logger.Info("Starting Monomer node in-process")
 	err := startMonomerNode(&WrappedApplication{
 		app: app,
-	}, env, monomerCtx, svrCtx)
+	}, env, monomerCtx, svrCtx, metrics)
 	if err != nil {
 		return fmt.Errorf("start Monomer node: %v", err)
 	}
@@ -151,6 +158,7 @@ func startMonomerNode(
 	env *environment.Env,
 	monomerCtx context.Context,
 	svrCtx *server.Context,
+	metrics *telemetry.Metrics,
 ) error {
 	engineWS, err := net.Listen("tcp", viper.GetString(monomerEngineWSFlag))
 	if err != nil {
@@ -163,6 +171,9 @@ func startMonomerNode(
 	if err != nil {
 		return fmt.Errorf("create CometBFT listener: %v", err)
 	}
+
+	// TODO: look into svrCtx.Config.Instrumentation to see if we need to pass any info from it to the Monomer node for prometheus metrics
+	//svrCtx.Config.Instrumentation
 
 	blockdb, err := dbm.NewDB("blockstore", dbm.BackendType(svrCtx.Config.DBBackend), svrCtx.Config.RootDir)
 	if err != nil {
@@ -221,6 +232,7 @@ func startMonomerNode(
 				svrCtx.Logger.Error("[CometBFT]", "error", err)
 			},
 		},
+		metrics,
 	)
 	svrCtx.Logger.Info("Spinning up Monomer node")
 
@@ -231,4 +243,11 @@ func startMonomerNode(
 	svrCtx.Logger.Info("Monomer started w/ CometBFT listener on", "address", cometListener.Addr())
 
 	return nil
+}
+
+// startTelemetry starts telemetry if enabled and returns a metrics instance.
+// If telemetry is not enabled, it returns a nil metrics instance.
+// See https://github.com/cosmos/cosmos-sdk/blob/7fb26685cd68a6c1d199dc270c80f49f2bfe7ace/server/start.go#L562
+func startTelemetry(cfg serverconfig.Config) (*telemetry.Metrics, error) {
+	return telemetry.New(cfg.Telemetry)
 }

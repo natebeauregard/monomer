@@ -2,11 +2,9 @@ package node_test
 
 import (
 	"context"
-	"net"
-	"testing"
-
 	cometdb "github.com/cometbft/cometbft-db"
 	dbm "github.com/cosmos/cosmos-db"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/polymerdao/monomer"
@@ -15,6 +13,10 @@ import (
 	"github.com/polymerdao/monomer/node"
 	"github.com/polymerdao/monomer/testapp"
 	"github.com/stretchr/testify/require"
+	"io"
+	"net"
+	"net/http"
+	"testing"
 )
 
 func TestRun(t *testing.T) {
@@ -36,6 +38,10 @@ func TestRun(t *testing.T) {
 	defer func() {
 		require.NoError(t, mempooldb.Close())
 	}()
+	metrics, err := telemetry.New(telemetry.Config{Enabled: true})
+	if err != nil {
+		require.NoError(t, err)
+	}
 	n := node.New(
 		app,
 		&genesis.Genesis{
@@ -54,7 +60,9 @@ func TestRun(t *testing.T) {
 			OnEngineWebsocketServeErrCb: func(err error) {
 				require.NoError(t, err)
 			},
-		})
+		},
+		metrics,
+	)
 
 	env := environment.New()
 	defer func() {
@@ -79,4 +87,18 @@ func TestRun(t *testing.T) {
 	var msg string
 	require.NoError(t, cometClient.Call(&msg, "echo", want))
 	require.Equal(t, want, msg)
+
+	// TODO: remove from this test or add to a separate test - testing purposes only
+	//resp, err := http.Get("http://127.0.0.1:26660/metrics")
+	resp, err := http.Get("http://127.0.0.1:8892/metrics")
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	respBodyBz, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	defer func() {
+		require.NoError(t, resp.Body.Close())
+	}()
+	respBody := string(respBodyBz)
+	t.Log("Monomer metrics response: ", respBody)
+	require.Contains(t, respBody, "eth.chain_id")
 }

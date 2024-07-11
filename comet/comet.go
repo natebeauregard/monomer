@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	"sort"
 	"time"
 
@@ -146,6 +147,10 @@ func NewBroadcastTx(app AppMempool, mempool Mempool) *BroadcastTx {
 // BroadcastTxSync returns with the response from CheckTx, but does not wait for DeliverTx (tx execution).
 // More: https://docs.cometbft.com/main/rpc/#/Tx/broadcast_tx_sync
 func (s *BroadcastTx) BroadcastTx(ctx *jsonrpctypes.Context, tx bfttypes.Tx) (*rpctypes.ResultBroadcastTx, error) {
+	// TODO: add metrics to the rest of the comet endpoints. Different PR?
+	telemetry.IncrCounter(1, "comet", "broadcast_tx")
+	defer telemetry.MeasureSince(telemetry.Now(), "comet", "broadcast_tx")
+
 	checkTxResp, err := s.app.CheckTx(ctx.Context(), &abcitypes.RequestCheckTx{
 		Tx:   tx,
 		Type: abcitypes.CheckTxType_New,

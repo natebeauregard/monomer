@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	"log"
 	"sync"
 
@@ -73,6 +74,9 @@ func (e *EngineAPI) ForkchoiceUpdatedV3(
 ) (*eth.ForkchoiceUpdatedResult, error) {
 	e.lock.Lock()
 	defer e.lock.Unlock()
+
+	telemetry.IncrCounter(1, "engine", "forkchoice_updated_v3")
+	defer telemetry.MeasureSince(telemetry.Now(), "engine", "forkchoice_updated_v3")
 
 	// OP spec:
 	//   - headBlockHash: block hash of the head of the canonical chain. Labeled "unsafe" in user JSON-RPC.
@@ -234,6 +238,9 @@ func (e *EngineAPI) GetPayloadV3(ctx context.Context, payloadID engine.PayloadID
 	e.lock.RLock()
 	defer e.lock.RUnlock()
 
+	telemetry.IncrCounter(1, "engine", "get_payload_v3")
+	defer telemetry.MeasureSince(telemetry.Now(), "engine", "get_payload_v3")
+
 	if e.currentPayloadAttributes == nil {
 		return nil, engine.InvalidParams.With(errors.New("payload not found"))
 	}
@@ -301,6 +308,9 @@ func (e *EngineAPI) NewPayloadV2(payload eth.ExecutionPayload) (*eth.PayloadStat
 func (e *EngineAPI) NewPayloadV3(payload eth.ExecutionPayload) (*eth.PayloadStatusV1, error) { //nolint:gocritic
 	e.lock.Lock()
 	defer e.lock.Unlock()
+
+	telemetry.IncrCounter(1, "engine", "new_payload_v3")
+	defer telemetry.MeasureSince(telemetry.Now(), "engine", "new_payload_v3")
 
 	if e.blockStore.BlockByHash(payload.BlockHash) == nil {
 		return &eth.PayloadStatusV1{
