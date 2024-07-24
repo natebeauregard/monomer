@@ -12,6 +12,7 @@ var (
 	registerErr     = newErrRegistry(ModuleName, 1)
 	ErrInvalidL1Txs = registerErr("invalid L1 txs")
 	ErrMintETH      = registerErr("failed to mint ETH")
+	ErrBurnETH      = registerErr("failed to burn ETH")
 	ErrL1BlockInfo  = registerErr("L1 block info")
 )
 

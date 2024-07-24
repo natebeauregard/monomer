@@ -29,24 +29,24 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryL1BlockInfoRequest is the request type for the Query/L1BlockInfo RPC
-type L1BlockInfoRequest struct {
+// L1BlockInfoRequest is the request type for the Query/L1BlockInfo RPC
+type QueryL1BlockInfoRequest struct {
 	// L2 block height; use 0 for latest block height
 	Height uint64 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
 }
 
-func (m *L1BlockInfoRequest) Reset()         { *m = L1BlockInfoRequest{} }
-func (m *L1BlockInfoRequest) String() string { return proto.CompactTextString(m) }
-func (*L1BlockInfoRequest) ProtoMessage()    {}
-func (*L1BlockInfoRequest) Descriptor() ([]byte, []int) {
+func (m *QueryL1BlockInfoRequest) Reset()         { *m = QueryL1BlockInfoRequest{} }
+func (m *QueryL1BlockInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryL1BlockInfoRequest) ProtoMessage()    {}
+func (*QueryL1BlockInfoRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_3e27fbb9d8b6a617, []int{0}
 }
-func (m *L1BlockInfoRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryL1BlockInfoRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *L1BlockInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryL1BlockInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_L1BlockInfoRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryL1BlockInfoRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -56,20 +56,20 @@ func (m *L1BlockInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *L1BlockInfoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_L1BlockInfoRequest.Merge(m, src)
+func (m *QueryL1BlockInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryL1BlockInfoRequest.Merge(m, src)
 }
-func (m *L1BlockInfoRequest) XXX_Size() int {
+func (m *QueryL1BlockInfoRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *L1BlockInfoRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_L1BlockInfoRequest.DiscardUnknown(m)
+func (m *QueryL1BlockInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryL1BlockInfoRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_L1BlockInfoRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryL1BlockInfoRequest proto.InternalMessageInfo
 
 // L1BlockInfoResponse is the stored L1 block info
-type L1BlockInfoResponse struct {
+type QueryL1BlockInfoResponse struct {
 	// Block number
 	Number uint64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
 	// Block timestamp
@@ -91,18 +91,18 @@ type L1BlockInfoResponse struct {
 	L1FeeScalar []byte `protobuf:"bytes,8,opt,name=l1_fee_scalar,json=l1FeeScalar,proto3" json:"l1_fee_scalar,omitempty"`
 }
 
-func (m *L1BlockInfoResponse) Reset()         { *m = L1BlockInfoResponse{} }
-func (m *L1BlockInfoResponse) String() string { return proto.CompactTextString(m) }
-func (*L1BlockInfoResponse) ProtoMessage()    {}
-func (*L1BlockInfoResponse) Descriptor() ([]byte, []int) {
+func (m *QueryL1BlockInfoResponse) Reset()         { *m = QueryL1BlockInfoResponse{} }
+func (m *QueryL1BlockInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryL1BlockInfoResponse) ProtoMessage()    {}
+func (*QueryL1BlockInfoResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_3e27fbb9d8b6a617, []int{1}
 }
-func (m *L1BlockInfoResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryL1BlockInfoResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *L1BlockInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryL1BlockInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_L1BlockInfoResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryL1BlockInfoResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -112,59 +112,156 @@ func (m *L1BlockInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *L1BlockInfoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_L1BlockInfoResponse.Merge(m, src)
+func (m *QueryL1BlockInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryL1BlockInfoResponse.Merge(m, src)
 }
-func (m *L1BlockInfoResponse) XXX_Size() int {
+func (m *QueryL1BlockInfoResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *L1BlockInfoResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_L1BlockInfoResponse.DiscardUnknown(m)
+func (m *QueryL1BlockInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryL1BlockInfoResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_L1BlockInfoResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryL1BlockInfoResponse proto.InternalMessageInfo
+
+// QueryOutputAtBlockRequest is the request type for the Query/OutputAtBlock RPC endpoint to retrieve the output at a given block
+type QueryOutputAtBlockRequest struct {
+	// L2 block number to retrieve the output for
+	BlockNum uint64 `protobuf:"varint,1,opt,name=blockNum,proto3" json:"blockNum,omitempty"`
+}
+
+func (m *QueryOutputAtBlockRequest) Reset()         { *m = QueryOutputAtBlockRequest{} }
+func (m *QueryOutputAtBlockRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryOutputAtBlockRequest) ProtoMessage()    {}
+func (*QueryOutputAtBlockRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e27fbb9d8b6a617, []int{2}
+}
+func (m *QueryOutputAtBlockRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryOutputAtBlockRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryOutputAtBlockRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryOutputAtBlockRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryOutputAtBlockRequest.Merge(m, src)
+}
+func (m *QueryOutputAtBlockRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryOutputAtBlockRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryOutputAtBlockRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryOutputAtBlockRequest proto.InternalMessageInfo
+
+// QueryOutputAtBlockResponse returns the output for a given block number
+type QueryOutputAtBlockResponse struct {
+	// TODO: add docs and descriptive types
+	Version               []byte `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	OutputRoot            []byte `protobuf:"bytes,2,opt,name=output_root,json=outputRoot,proto3" json:"output_root,omitempty"`
+	BlockRef              []byte `protobuf:"bytes,3,opt,name=block_ref,json=blockRef,proto3" json:"block_ref,omitempty"`
+	WithdrawalStorageRoot []byte `protobuf:"bytes,4,opt,name=withdrawal_storage_root,json=withdrawalStorageRoot,proto3" json:"withdrawal_storage_root,omitempty"`
+	StateRoot             []byte `protobuf:"bytes,5,opt,name=state_root,json=stateRoot,proto3" json:"state_root,omitempty"`
+	Status                []byte `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+}
+
+func (m *QueryOutputAtBlockResponse) Reset()         { *m = QueryOutputAtBlockResponse{} }
+func (m *QueryOutputAtBlockResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryOutputAtBlockResponse) ProtoMessage()    {}
+func (*QueryOutputAtBlockResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e27fbb9d8b6a617, []int{3}
+}
+func (m *QueryOutputAtBlockResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryOutputAtBlockResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryOutputAtBlockResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryOutputAtBlockResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryOutputAtBlockResponse.Merge(m, src)
+}
+func (m *QueryOutputAtBlockResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryOutputAtBlockResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryOutputAtBlockResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryOutputAtBlockResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*L1BlockInfoRequest)(nil), "rollup.v1.L1BlockInfoRequest")
-	proto.RegisterType((*L1BlockInfoResponse)(nil), "rollup.v1.L1BlockInfoResponse")
+	proto.RegisterType((*QueryL1BlockInfoRequest)(nil), "rollup.v1.QueryL1BlockInfoRequest")
+	proto.RegisterType((*QueryL1BlockInfoResponse)(nil), "rollup.v1.QueryL1BlockInfoResponse")
+	proto.RegisterType((*QueryOutputAtBlockRequest)(nil), "rollup.v1.QueryOutputAtBlockRequest")
+	proto.RegisterType((*QueryOutputAtBlockResponse)(nil), "rollup.v1.QueryOutputAtBlockResponse")
 }
 
 func init() { proto.RegisterFile("rollup/v1/query.proto", fileDescriptor_3e27fbb9d8b6a617) }
 
 var fileDescriptor_3e27fbb9d8b6a617 = []byte{
-	// 509 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0xcf, 0x6b, 0x13, 0x51,
-	0x10, 0xce, 0x6e, 0x63, 0xdb, 0xbc, 0x26, 0x16, 0x9e, 0x56, 0xd6, 0xd0, 0xae, 0x35, 0x88, 0xf6,
-	0x94, 0xc7, 0x56, 0x4f, 0xf1, 0x64, 0x0e, 0x55, 0xc1, 0x1f, 0x31, 0x85, 0x50, 0xa4, 0x10, 0xde,
-	0xee, 0x4e, 0x76, 0x17, 0x77, 0xdf, 0xa4, 0x6f, 0x5f, 0x02, 0x45, 0xbc, 0xf4, 0xe4, 0x51, 0xf0,
-	0xe4, 0x4d, 0x3c, 0x7a, 0xf0, 0xef, 0x10, 0x4f, 0x05, 0x2f, 0x1e, 0x25, 0xf1, 0xe4, 0x5f, 0x21,
-	0xfb, 0xde, 0x26, 0x2a, 0xe2, 0xed, 0x9b, 0x6f, 0x66, 0xbe, 0x19, 0xbe, 0x19, 0xb2, 0x25, 0x31,
-	0x4d, 0x27, 0x63, 0x36, 0xf5, 0xd8, 0xc9, 0x04, 0xe4, 0x69, 0x7b, 0x2c, 0x51, 0x21, 0xad, 0x19,
-	0xba, 0x3d, 0xf5, 0x9a, 0x97, 0x23, 0x8c, 0x50, 0xb3, 0xac, 0x40, 0xa6, 0xa0, 0xb9, 0x1d, 0x21,
-	0x46, 0x29, 0x30, 0x3e, 0x4e, 0x18, 0x17, 0x02, 0x15, 0x57, 0x09, 0x8a, 0xdc, 0x64, 0x5b, 0xfb,
-	0x84, 0x3e, 0xf2, 0xba, 0x29, 0x06, 0x2f, 0x1e, 0x8a, 0x11, 0xf6, 0xe1, 0x64, 0x02, 0xb9, 0xa2,
-	0x57, 0xc8, 0x6a, 0x0c, 0x49, 0x14, 0x2b, 0xc7, 0xda, 0xb5, 0xf6, 0xaa, 0xfd, 0x32, 0xea, 0x54,
-	0x5f, 0xbf, 0xbf, 0x56, 0x69, 0xbd, 0xb3, 0xc9, 0xa5, 0xbf, 0x9a, 0xf2, 0x31, 0x8a, 0x1c, 0x8a,
-	0x2e, 0x31, 0xc9, 0x7c, 0x90, 0x8b, 0x2e, 0x13, 0x51, 0x4a, 0xaa, 0x2a, 0xc9, 0xc0, 0xb1, 0x35,
-	0xab, 0x31, 0xbd, 0x4a, 0xd6, 0x7d, 0x9e, 0xc3, 0x70, 0x04, 0xe0, 0xac, 0xec, 0x5a, 0x7b, 0xf5,
-	0xfe, 0x5a, 0x11, 0x1f, 0x00, 0xd0, 0x1d, 0x42, 0xfc, 0x42, 0x7b, 0x18, 0xf3, 0x3c, 0x76, 0xaa,
-	0x3a, 0x59, 0xd3, 0xcc, 0x03, 0x9e, 0xc7, 0xf4, 0x16, 0xd9, 0xcc, 0x8b, 0x35, 0x45, 0x00, 0xc3,
-	0x72, 0xdc, 0x05, 0x2d, 0x7c, 0x71, 0x41, 0x3f, 0x31, 0x63, 0xaf, 0x93, 0xba, 0xcf, 0x55, 0x10,
-	0x83, 0x1c, 0xf2, 0x30, 0x94, 0xce, 0xaa, 0x56, 0xda, 0x28, 0xb9, 0x7b, 0x61, 0x28, 0xe9, 0x4d,
-	0xb2, 0x99, 0x7a, 0xc5, 0x0e, 0x43, 0x9c, 0x82, 0x8c, 0x81, 0x87, 0xce, 0x9a, 0xae, 0x6a, 0xa4,
-	0xde, 0x01, 0xc0, 0xd3, 0x92, 0xa4, 0x2d, 0xd2, 0x28, 0xeb, 0xf2, 0x80, 0xa7, 0x5c, 0x3a, 0xeb,
-	0x46, 0x4b, 0x57, 0x1d, 0x6a, 0xca, 0x78, 0xb3, 0x7f, 0x66, 0x91, 0xfa, 0xb3, 0xe2, 0x3c, 0x87,
-	0x20, 0xa7, 0x49, 0x00, 0x54, 0x92, 0x8d, 0x3f, 0xbc, 0xa2, 0x3b, 0xed, 0xe5, 0xbd, 0xda, 0xff,
-	0x1a, 0xdf, 0x74, 0xff, 0x97, 0x36, 0x16, 0xb7, 0x6e, 0x9c, 0x7d, 0xfd, 0xf1, 0xd6, 0x76, 0xe9,
-	0x36, 0x2b, 0xbf, 0x21, 0xf5, 0xb4, 0x33, 0x89, 0x18, 0x21, 0x7b, 0x69, 0xae, 0xf4, 0xaa, 0xfb,
-	0xc9, 0xfa, 0x3c, 0x73, 0xad, 0xf3, 0x99, 0x6b, 0x7d, 0x9f, 0xb9, 0xd6, 0x9b, 0xb9, 0x5b, 0x39,
-	0x9f, 0xbb, 0x95, 0x6f, 0x73, 0xb7, 0x42, 0x1a, 0x01, 0x66, 0xbf, 0x67, 0x74, 0x89, 0xde, 0xb5,
-	0x57, 0xbc, 0x42, 0xcf, 0x7a, 0x7e, 0x27, 0x4a, 0x54, 0x3c, 0xf1, 0xdb, 0x01, 0x66, 0x6c, 0x8c,
-	0xe9, 0x69, 0x06, 0x32, 0xe4, 0xc8, 0x32, 0x14, 0x98, 0x81, 0x64, 0x11, 0x08, 0xb6, 0x7c, 0xc2,
-	0xbb, 0x06, 0x4d, 0xbd, 0x0f, 0xf6, 0x4a, 0xff, 0xe8, 0xe8, 0xa3, 0x5d, 0xeb, 0x1b, 0xd5, 0x81,
-	0xf7, 0x65, 0x81, 0x8f, 0x07, 0xde, 0xcc, 0xde, 0x5a, 0xe2, 0xe3, 0xfb, 0xbd, 0xee, 0x63, 0x50,
-	0x3c, 0xe4, 0x8a, 0xff, 0xb4, 0x89, 0xe1, 0x3b, 0x9d, 0x81, 0xe7, 0xaf, 0xea, 0x67, 0xbc, 0xfd,
-	0x2b, 0x00, 0x00, 0xff, 0xff, 0x5f, 0x48, 0x35, 0x84, 0xe4, 0x02, 0x00, 0x00,
+	// 692 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x54, 0xcf, 0x4f, 0xd4, 0x5a,
+	0x14, 0x9e, 0x96, 0x61, 0x80, 0xcb, 0xcc, 0x23, 0xb9, 0x79, 0x40, 0x99, 0x07, 0x03, 0x6f, 0x00,
+	0x25, 0x31, 0x99, 0xa6, 0x6a, 0x34, 0xc1, 0xb8, 0x60, 0x16, 0xa8, 0x89, 0x02, 0x96, 0x84, 0x10,
+	0x43, 0xd2, 0xdc, 0x99, 0x9e, 0x69, 0x1b, 0xdb, 0xde, 0xe1, 0xf6, 0x76, 0x08, 0x41, 0x36, 0xae,
+	0x74, 0x67, 0xe2, 0xc6, 0x95, 0x31, 0x2e, 0x5d, 0xf8, 0x77, 0x18, 0x57, 0x24, 0x6e, 0x5c, 0x9a,
+	0xc1, 0x8d, 0xfe, 0x15, 0xa6, 0xf7, 0xde, 0x0e, 0xfe, 0x40, 0xdd, 0x9d, 0xf3, 0x9d, 0x73, 0xbe,
+	0x73, 0xce, 0x77, 0x4f, 0x8b, 0x26, 0x19, 0x0d, 0xc3, 0xb4, 0x6b, 0xf6, 0x2c, 0x73, 0x3f, 0x05,
+	0x76, 0xd8, 0xe8, 0x32, 0xca, 0x29, 0x1e, 0x93, 0x70, 0xa3, 0x67, 0x55, 0xff, 0xf5, 0xa8, 0x47,
+	0x05, 0x6a, 0x66, 0x96, 0x4c, 0xa8, 0xce, 0x7a, 0x94, 0x7a, 0x21, 0x98, 0xa4, 0x1b, 0x98, 0x24,
+	0x8e, 0x29, 0x27, 0x3c, 0xa0, 0x71, 0x22, 0xa3, 0xf5, 0xeb, 0x68, 0xfa, 0x7e, 0xc6, 0x76, 0xd7,
+	0x6a, 0x86, 0xb4, 0xfd, 0xf0, 0x4e, 0xdc, 0xa1, 0x36, 0xec, 0xa7, 0x90, 0x70, 0x3c, 0x85, 0x4a,
+	0x3e, 0x04, 0x9e, 0xcf, 0x0d, 0x6d, 0x41, 0x5b, 0x29, 0xda, 0xca, 0x5b, 0x2d, 0x3e, 0x79, 0x35,
+	0x5f, 0xa8, 0xbf, 0xd4, 0x91, 0xf1, 0x6b, 0x65, 0xd2, 0xa5, 0x71, 0x02, 0x59, 0x69, 0x9c, 0x46,
+	0x2d, 0x60, 0x79, 0xa9, 0xf4, 0x30, 0x46, 0x45, 0x1e, 0x44, 0x60, 0xe8, 0x02, 0x15, 0x36, 0x9e,
+	0x41, 0xa3, 0x2d, 0x92, 0x80, 0xd3, 0x01, 0x30, 0x86, 0x16, 0xb4, 0x95, 0xb2, 0x3d, 0x92, 0xf9,
+	0xeb, 0x00, 0x78, 0x0e, 0xa1, 0x56, 0xc6, 0xed, 0xf8, 0x24, 0xf1, 0x8d, 0xa2, 0x08, 0x8e, 0x09,
+	0xe4, 0x36, 0x49, 0x7c, 0x7c, 0x11, 0x4d, 0x24, 0xd9, 0xac, 0x71, 0x1b, 0x1c, 0xd5, 0x6e, 0x58,
+	0x10, 0xff, 0x93, 0xc3, 0x1b, 0xb2, 0xed, 0xff, 0xa8, 0xdc, 0x22, 0xbc, 0xed, 0x03, 0x73, 0x88,
+	0xeb, 0x32, 0xa3, 0x24, 0x98, 0xc6, 0x15, 0xb6, 0xe6, 0xba, 0x0c, 0x5f, 0x40, 0x13, 0xa1, 0x95,
+	0xcd, 0xe0, 0xd0, 0x1e, 0x30, 0x1f, 0x88, 0x6b, 0x8c, 0x88, 0xac, 0x4a, 0x68, 0xad, 0x03, 0x6c,
+	0x2a, 0x10, 0xd7, 0x51, 0x45, 0xe5, 0x25, 0x6d, 0x12, 0x12, 0x66, 0x8c, 0x4a, 0x2e, 0x91, 0xb5,
+	0x2d, 0x20, 0x25, 0xd0, 0x4d, 0x34, 0x23, 0xf4, 0xd9, 0x4c, 0x79, 0x37, 0xe5, 0x6b, 0x5c, 0xa8,
+	0x94, 0x6b, 0x5b, 0x45, 0xa3, 0x62, 0x8f, 0x8d, 0x34, 0x52, 0x12, 0x0d, 0x7c, 0x55, 0xfe, 0x45,
+	0x43, 0xd5, 0xf3, 0xea, 0x95, 0xc2, 0x06, 0x1a, 0xe9, 0x01, 0x4b, 0x02, 0x1a, 0x8b, 0xfa, 0xb2,
+	0x9d, 0xbb, 0x78, 0x1e, 0x8d, 0x53, 0x51, 0xe2, 0x30, 0x4a, 0xb9, 0x90, 0xba, 0x6c, 0x23, 0x09,
+	0xd9, 0x94, 0x72, 0xfc, 0x1f, 0x92, 0x1a, 0x3a, 0x0c, 0x3a, 0x4a, 0x71, 0xd9, 0xdc, 0x86, 0x0e,
+	0xbe, 0x86, 0xa6, 0x0f, 0x02, 0xee, 0xbb, 0x8c, 0x1c, 0x90, 0xd0, 0x49, 0x38, 0x65, 0xc4, 0x03,
+	0xc9, 0x24, 0xf5, 0x9f, 0x3c, 0x0b, 0x6f, 0xcb, 0xa8, 0x20, 0x9d, 0x43, 0x28, 0xe1, 0x84, 0xab,
+	0xd4, 0x61, 0xf9, 0x54, 0x02, 0x11, 0xe1, 0x29, 0x54, 0xca, 0x9c, 0x34, 0x51, 0xda, 0x2b, 0x4f,
+	0xee, 0x7a, 0xf9, 0x85, 0x8e, 0xca, 0x62, 0xd7, 0x6d, 0x60, 0xbd, 0xa0, 0x0d, 0xf8, 0x11, 0x1a,
+	0xff, 0xee, 0xac, 0x70, 0xbd, 0x31, 0x38, 0xf2, 0xc6, 0x6f, 0xae, 0xb5, 0xba, 0xf8, 0xc7, 0x1c,
+	0xa9, 0x5a, 0x7d, 0xe9, 0xf1, 0x87, 0xcf, 0xcf, 0xf5, 0x1a, 0x9e, 0x35, 0xd5, 0xc7, 0x14, 0x5a,
+	0x62, 0xf3, 0x20, 0xee, 0x50, 0xf3, 0x48, 0xde, 0xf7, 0x31, 0x7e, 0xaa, 0xa1, 0xca, 0x0f, 0xaa,
+	0xe3, 0xa5, 0x9f, 0xc9, 0xcf, 0x7b, 0xd4, 0xea, 0xf2, 0x5f, 0xb2, 0xd4, 0x10, 0x97, 0xc4, 0x10,
+	0xcb, 0x78, 0x31, 0x1f, 0x42, 0xbe, 0x0d, 0xe1, 0x62, 0x14, 0xf3, 0x28, 0x3f, 0x84, 0x16, 0xb0,
+	0xe3, 0xe6, 0x5b, 0xed, 0x5d, 0xbf, 0xa6, 0x9d, 0xf4, 0x6b, 0xda, 0xa7, 0x7e, 0x4d, 0x7b, 0x76,
+	0x5a, 0x2b, 0x9c, 0x9c, 0xd6, 0x0a, 0x1f, 0x4f, 0x6b, 0x05, 0x54, 0x69, 0xd3, 0xe8, 0xac, 0x63,
+	0x13, 0x89, 0x96, 0x5b, 0xd9, 0x57, 0xbd, 0xa5, 0x3d, 0xb8, 0xea, 0x05, 0xdc, 0x4f, 0x5b, 0x8d,
+	0x36, 0x8d, 0xcc, 0x2e, 0x0d, 0x0f, 0x23, 0x60, 0x2e, 0xa1, 0x66, 0x44, 0x63, 0x1a, 0x01, 0x33,
+	0x3d, 0x88, 0xcd, 0xc1, 0xff, 0xe4, 0x86, 0xb4, 0x7a, 0xd6, 0x6b, 0x7d, 0xc8, 0xde, 0xdd, 0x7d,
+	0xa3, 0x8f, 0xd9, 0x92, 0x75, 0xc7, 0x7a, 0x9f, 0xdb, 0x7b, 0x3b, 0x56, 0x5f, 0x9f, 0x1c, 0xd8,
+	0x7b, 0xb7, 0xb6, 0x9a, 0xf7, 0x80, 0x13, 0x97, 0x70, 0xf2, 0x55, 0x47, 0x12, 0x5f, 0x5d, 0xdd,
+	0xb1, 0x5a, 0x25, 0xf1, 0x5f, 0xb9, 0xf2, 0x2d, 0x00, 0x00, 0xff, 0xff, 0x08, 0x7e, 0x87, 0x7a,
+	0xaf, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -179,7 +276,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryServiceClient interface {
-	L1BlockInfo(ctx context.Context, in *L1BlockInfoRequest, opts ...grpc.CallOption) (*L1BlockInfoResponse, error)
+	L1BlockInfo(ctx context.Context, in *QueryL1BlockInfoRequest, opts ...grpc.CallOption) (*QueryL1BlockInfoResponse, error)
+	OutputAtBlock(ctx context.Context, in *QueryOutputAtBlockRequest, opts ...grpc.CallOption) (*QueryOutputAtBlockResponse, error)
 }
 
 type queryServiceClient struct {
@@ -190,9 +288,18 @@ func NewQueryServiceClient(cc grpc1.ClientConn) QueryServiceClient {
 	return &queryServiceClient{cc}
 }
 
-func (c *queryServiceClient) L1BlockInfo(ctx context.Context, in *L1BlockInfoRequest, opts ...grpc.CallOption) (*L1BlockInfoResponse, error) {
-	out := new(L1BlockInfoResponse)
+func (c *queryServiceClient) L1BlockInfo(ctx context.Context, in *QueryL1BlockInfoRequest, opts ...grpc.CallOption) (*QueryL1BlockInfoResponse, error) {
+	out := new(QueryL1BlockInfoResponse)
 	err := c.cc.Invoke(ctx, "/rollup.v1.QueryService/L1BlockInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryServiceClient) OutputAtBlock(ctx context.Context, in *QueryOutputAtBlockRequest, opts ...grpc.CallOption) (*QueryOutputAtBlockResponse, error) {
+	out := new(QueryOutputAtBlockResponse)
+	err := c.cc.Invoke(ctx, "/rollup.v1.QueryService/OutputAtBlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -201,15 +308,19 @@ func (c *queryServiceClient) L1BlockInfo(ctx context.Context, in *L1BlockInfoReq
 
 // QueryServiceServer is the server API for QueryService service.
 type QueryServiceServer interface {
-	L1BlockInfo(context.Context, *L1BlockInfoRequest) (*L1BlockInfoResponse, error)
+	L1BlockInfo(context.Context, *QueryL1BlockInfoRequest) (*QueryL1BlockInfoResponse, error)
+	OutputAtBlock(context.Context, *QueryOutputAtBlockRequest) (*QueryOutputAtBlockResponse, error)
 }
 
 // UnimplementedQueryServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServiceServer struct {
 }
 
-func (*UnimplementedQueryServiceServer) L1BlockInfo(ctx context.Context, req *L1BlockInfoRequest) (*L1BlockInfoResponse, error) {
+func (*UnimplementedQueryServiceServer) L1BlockInfo(ctx context.Context, req *QueryL1BlockInfoRequest) (*QueryL1BlockInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method L1BlockInfo not implemented")
+}
+func (*UnimplementedQueryServiceServer) OutputAtBlock(ctx context.Context, req *QueryOutputAtBlockRequest) (*QueryOutputAtBlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OutputAtBlock not implemented")
 }
 
 func RegisterQueryServiceServer(s grpc1.Server, srv QueryServiceServer) {
@@ -217,7 +328,7 @@ func RegisterQueryServiceServer(s grpc1.Server, srv QueryServiceServer) {
 }
 
 func _QueryService_L1BlockInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(L1BlockInfoRequest)
+	in := new(QueryL1BlockInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -229,7 +340,25 @@ func _QueryService_L1BlockInfo_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/rollup.v1.QueryService/L1BlockInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServiceServer).L1BlockInfo(ctx, req.(*L1BlockInfoRequest))
+		return srv.(QueryServiceServer).L1BlockInfo(ctx, req.(*QueryL1BlockInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QueryService_OutputAtBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryOutputAtBlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServiceServer).OutputAtBlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/rollup.v1.QueryService/OutputAtBlock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServiceServer).OutputAtBlock(ctx, req.(*QueryOutputAtBlockRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -242,12 +371,16 @@ var _QueryService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "L1BlockInfo",
 			Handler:    _QueryService_L1BlockInfo_Handler,
 		},
+		{
+			MethodName: "OutputAtBlock",
+			Handler:    _QueryService_OutputAtBlock_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "rollup/v1/query.proto",
 }
 
-func (m *L1BlockInfoRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryL1BlockInfoRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -257,12 +390,12 @@ func (m *L1BlockInfoRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *L1BlockInfoRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryL1BlockInfoRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *L1BlockInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryL1BlockInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -275,7 +408,7 @@ func (m *L1BlockInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *L1BlockInfoResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryL1BlockInfoResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -285,12 +418,12 @@ func (m *L1BlockInfoResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *L1BlockInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryL1BlockInfoResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *L1BlockInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryL1BlockInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -348,6 +481,99 @@ func (m *L1BlockInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryOutputAtBlockRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryOutputAtBlockRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryOutputAtBlockRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.BlockNum != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.BlockNum))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryOutputAtBlockResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryOutputAtBlockResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryOutputAtBlockResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Status) > 0 {
+		i -= len(m.Status)
+		copy(dAtA[i:], m.Status)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Status)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.StateRoot) > 0 {
+		i -= len(m.StateRoot)
+		copy(dAtA[i:], m.StateRoot)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.StateRoot)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.WithdrawalStorageRoot) > 0 {
+		i -= len(m.WithdrawalStorageRoot)
+		copy(dAtA[i:], m.WithdrawalStorageRoot)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.WithdrawalStorageRoot)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.BlockRef) > 0 {
+		i -= len(m.BlockRef)
+		copy(dAtA[i:], m.BlockRef)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.BlockRef)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.OutputRoot) > 0 {
+		i -= len(m.OutputRoot)
+		copy(dAtA[i:], m.OutputRoot)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.OutputRoot)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Version) > 0 {
+		i -= len(m.Version)
+		copy(dAtA[i:], m.Version)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Version)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -359,7 +585,7 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *L1BlockInfoRequest) Size() (n int) {
+func (m *QueryL1BlockInfoRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -371,7 +597,7 @@ func (m *L1BlockInfoRequest) Size() (n int) {
 	return n
 }
 
-func (m *L1BlockInfoResponse) Size() (n int) {
+func (m *QueryL1BlockInfoResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -409,13 +635,58 @@ func (m *L1BlockInfoResponse) Size() (n int) {
 	return n
 }
 
+func (m *QueryOutputAtBlockRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.BlockNum != 0 {
+		n += 1 + sovQuery(uint64(m.BlockNum))
+	}
+	return n
+}
+
+func (m *QueryOutputAtBlockResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Version)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.OutputRoot)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.BlockRef)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.WithdrawalStorageRoot)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.StateRoot)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.Status)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
 func sovQuery(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *L1BlockInfoRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryL1BlockInfoRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -438,10 +709,10 @@ func (m *L1BlockInfoRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: L1BlockInfoRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryL1BlockInfoRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: L1BlockInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryL1BlockInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -484,7 +755,7 @@ func (m *L1BlockInfoRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *L1BlockInfoResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryL1BlockInfoResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -507,10 +778,10 @@ func (m *L1BlockInfoResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: L1BlockInfoResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryL1BlockInfoResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: L1BlockInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryL1BlockInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -738,6 +1009,329 @@ func (m *L1BlockInfoResponse) Unmarshal(dAtA []byte) error {
 			m.L1FeeScalar = append(m.L1FeeScalar[:0], dAtA[iNdEx:postIndex]...)
 			if m.L1FeeScalar == nil {
 				m.L1FeeScalar = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryOutputAtBlockRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryOutputAtBlockRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryOutputAtBlockRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BlockNum", wireType)
+			}
+			m.BlockNum = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.BlockNum |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryOutputAtBlockResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryOutputAtBlockResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryOutputAtBlockResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Version = append(m.Version[:0], dAtA[iNdEx:postIndex]...)
+			if m.Version == nil {
+				m.Version = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OutputRoot", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OutputRoot = append(m.OutputRoot[:0], dAtA[iNdEx:postIndex]...)
+			if m.OutputRoot == nil {
+				m.OutputRoot = []byte{}
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BlockRef", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.BlockRef = append(m.BlockRef[:0], dAtA[iNdEx:postIndex]...)
+			if m.BlockRef == nil {
+				m.BlockRef = []byte{}
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawalStorageRoot", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.WithdrawalStorageRoot = append(m.WithdrawalStorageRoot[:0], dAtA[iNdEx:postIndex]...)
+			if m.WithdrawalStorageRoot == nil {
+				m.WithdrawalStorageRoot = []byte{}
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StateRoot", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.StateRoot = append(m.StateRoot[:0], dAtA[iNdEx:postIndex]...)
+			if m.StateRoot == nil {
+				m.StateRoot = []byte{}
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Status = append(m.Status[:0], dAtA[iNdEx:postIndex]...)
+			if m.Status == nil {
+				m.Status = []byte{}
 			}
 			iNdEx = postIndex
 		default:

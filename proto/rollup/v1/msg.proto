@@ -2,17 +2,44 @@ syntax = "proto3";
 
 package rollup.v1;
 
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
 // MsgService defines all tx endpoints for the rollup module.
 service MsgService {
-  rpc ApplyL1Txs(ApplyL1TxsRequest) returns (ApplyL1TxsResponse);
+  rpc ApplyL1Txs(MsgApplyL1TxsRequest) returns (MsgApplyL1TxsResponse);
+  rpc InitiateWithdrawal(MsgInitiateWithdrawalRequest) returns (MsgInitiateWithdrawalResponse);
 }
 
-// ApplyL1TxsRequest defines a message for all L1 system and user deposit txs
-message ApplyL1TxsRequest {
+// MsgApplyL1TxsRequest defines a message for all L1 system and user deposit txs
+message MsgApplyL1TxsRequest {
   // Array of bytes where each bytes is a eth.Transaction.MarshalBinary tx.
   // The first tx must be the L1 system deposit tx, and the rest are user txs if present.
   repeated bytes tx_bytes = 1;
 }
 
-message ApplyL1TxsResponse {
+message MsgApplyL1TxsResponse {}
+
+// TODO: add docs
+message MsgInitiateWithdrawalRequest {
+  option (cosmos.msg.v1.signer) = "sender";
+  // The cosmos address of the user who wants to withdraw from L2.
+  string sender = 1;
+  // The ethereum address that the user wants to withdraw to.
+  string target = 2;
+  // The amount of eth the user wants to withdraw.
+  string amount = 3 [
+    (cosmos_proto.scalar)  = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable)   = false,
+    (amino.dont_omitempty) = true
+  ];
+  // TODO: may need to pass in additional fields for withdrawal (gasLimit, data)
+  // see https://specs.optimism.io/protocol/withdrawals.html#key-properties-of-withdrawal-verification
 }
+
+// TODO: add docs and correct response fields
+message MsgInitiateWithdrawalResponse {}

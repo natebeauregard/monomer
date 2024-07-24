@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,8 +28,10 @@ func NewMsgServerImpl(keeper *Keeper) rollupv1.MsgServiceServer {
 
 var _ rollupv1.MsgServiceServer = msgServer{}
 
-// ApplyL1Txs implements types.MsgServer.
-func (k *Keeper) ApplyL1Txs(goCtx context.Context, msg *rollupv1.ApplyL1TxsRequest) (*rollupv1.ApplyL1TxsResponse, error) {
+// TODO: create task to move full message/query implementations out of msg_server.go into separate files.
+
+// ApplyL1Txs executes all L1 system and user deposit txs passed through MsgApplyL1TxsRequest.
+func (k *Keeper) ApplyL1Txs(goCtx context.Context, msg *rollupv1.MsgApplyL1TxsRequest) (*rollupv1.MsgApplyL1TxsResponse, error) {
 	if msg.TxBytes == nil || len(msg.TxBytes) < 1 {
 		return nil, types.WrapError(types.ErrInvalidL1Txs, "must have at least one L1 Info Deposit tx")
 	}
@@ -101,7 +104,48 @@ func (k *Keeper) ApplyL1Txs(goCtx context.Context, msg *rollupv1.ApplyL1TxsReque
 			return nil, types.WrapError(types.ErrMintETH, "failed to mint ETH", "polymerAddress", cosmAddr, "err", err)
 		}
 	}
-	return &rollupv1.ApplyL1TxsResponse{}, nil
+	return &rollupv1.MsgApplyL1TxsResponse{}, nil
+}
+
+// InitiateWithdrawal initiates a withdrawal of L2 assets to L1 and burns the L2 assets.
+func (k *Keeper) InitiateWithdrawal(goCtx context.Context, msg *rollupv1.MsgInitiateWithdrawalRequest) (*rollupv1.MsgInitiateWithdrawalResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	ctx.Logger().Debug("withdrawing L2 assets", "sender", msg.Sender, "amount", msg.Amount)
+
+	// TODO: add custom error types to errors.go
+	accAddress, err := sdk.AccAddressFromBech32(msg.Sender)
+	if err != nil {
+		ctx.Logger().Error("invalid sender address", "sender", msg.Sender)
+		return nil, types.WrapError(err, "invalid sender address", "sender", msg.Sender)
+	}
+
+	if err := k.BurnETH(&ctx, accAddress, msg.Amount); err != nil {
+		return nil, types.WrapError(types.ErrBurnETH, "failed to burn ETH", "polymerAddress", accAddress, "err", err)
+	}
+
+	// Emit an event for relayers to use to build proofs of the withdrawal on L1
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		),
+		sdk.NewEvent(
+			types.EventTypeWithdrawalInitiated,
+			// TODO: make sure to add extra info needed for the proof (nonce, data, etc.)
+			sdk.NewAttribute(types.AttributeKeySender, msg.Sender),
+			sdk.NewAttribute(types.AttributeKeyTarget, msg.Target),
+			sdk.NewAttribute(types.AttributeKeyAmount, hexutil.Encode(msg.Amount.BigInt().Bytes())),
+		),
+	})
+
+	store := k.storeService.OpenKVStore(ctx)
+	withdrawaldb, err := store.Get([]byte(types.KeyWithdrawalDB))
+	// TODO: store withdrawal messages in a db emulating the L2ToL1MessagePasser contract storage
+	if err := store.Set([]byte(types.KeyWithdrawalDB), withdrawaldb); err != nil {
+		return nil, types.WrapError(err, "add withdrawal message to db")
+	}
+
+	return &rollupv1.MsgInitiateWithdrawalResponse{}, nil
 }
 
 // MintETH mints ETH to an account where the amount is in wei, the smallest unit of ETH
@@ -115,6 +159,8 @@ func (k *Keeper) MintETH(ctx *sdk.Context, addr sdk.AccAddress, amount sdkmath.I
 	}
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
+			// TODO: we probably don't want the event type to be "message" for this event since it's a call from WithdrawalInitiate
+			// Look into why the MintETH event is emitted as a "message" event
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		),
@@ -122,7 +168,38 @@ func (k *Keeper) MintETH(ctx *sdk.Context, addr sdk.AccAddress, amount sdkmath.I
 			types.EventTypeMintETH,
 			sdk.NewAttribute(types.AttributeKeyL1DepositTxType, types.L1UserDepositTxType),
 			sdk.NewAttribute(types.AttributeKeyToCosmosAddress, addr.String()),
-			sdk.NewAttribute(types.AttributeKeyAmount, hexutil.Encode((amount.BigInt().Bytes()))),
+			sdk.NewAttribute(types.AttributeKeyAmount, hexutil.Encode(amount.BigInt().Bytes())),
+		),
+	})
+	return nil
+}
+
+// BurnETH burns ETH from an account where the amount is in wei
+func (k *Keeper) BurnETH(ctx *sdk.Context, addr sdk.AccAddress, amount sdkmath.Int) error {
+	coins := sdk.NewCoins(sdk.NewCoin(types.ETH, amount))
+
+	// Transfer the coins to withdraw from the user account to the mint module
+	err := k.bankkeeper.SendCoinsFromAccountToModule(*ctx, addr, types.MintModule, coins)
+	if err != nil {
+		return fmt.Errorf("failed to send withdrawal coins from user account to mint module: %v", err)
+	}
+
+	// Burn the ETH coins from the mint module
+	if err := k.bankkeeper.BurnCoins(*ctx, types.MintModule, coins); err != nil {
+		return err
+	}
+
+	// TODO: mirrored these event attributes from MintETH. ensure that these are the attributes we want to emit here
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		),
+		sdk.NewEvent(
+			types.EventTypeBurnETH,
+			sdk.NewAttribute(types.AttributeKeyL2WithdrawalType, types.EventTypeWithdrawalInitiated),
+			sdk.NewAttribute(types.AttributeKeyFromCosmosAddress, addr.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, hexutil.Encode(amount.BigInt().Bytes())),
 		),
 	})
 	return nil
@@ -167,12 +244,12 @@ func (k *Keeper) SetL1BlockHistory(ctx context.Context, info *derive.L1BlockInfo
 		return types.WrapError(err, "marshal L1 block info")
 	}
 	if err := k.storeService.OpenKVStore(ctx).Set(info.BlockHash.Bytes(), infoBytes); err != nil {
-		return types.WrapError(err, "set")
+		return types.WrapError(err, "set L1 block history")
 	}
 	return nil
 }
 
 // evmToCosmos converts an EVM address to a sdk.AccAddress
 func evmToCosmos(addr common.Address) sdk.AccAddress {
-	return sdk.AccAddress(addr.Bytes())
+	return addr.Bytes()
 }

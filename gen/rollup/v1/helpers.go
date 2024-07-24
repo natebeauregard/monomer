@@ -8,27 +8,29 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-var _ sdktypes.Msg = (*ApplyL1TxsRequest)(nil)
+var _ sdktypes.Msg = (*MsgApplyL1TxsRequest)(nil)
 
-func (*ApplyL1TxsRequest) GetSigners() []sdktypes.AccAddress {
+func (*MsgApplyL1TxsRequest) GetSigners() []sdktypes.AccAddress {
 	return nil
 }
 
-func (m *ApplyL1TxsRequest) ValidateBasic() error {
+func (m *MsgApplyL1TxsRequest) ValidateBasic() error {
 	if len(m.TxBytes) < 1 {
 		return errors.New("expected TxBytes to contain at least one deposit transaction")
 	}
 	return nil
 }
 
-func (*ApplyL1TxsRequest) Type() string {
+func (*MsgApplyL1TxsRequest) Type() string {
 	return "l1txs"
 }
 
-func (*ApplyL1TxsRequest) Route() string {
+func (*MsgApplyL1TxsRequest) Route() string {
 	return "rollup"
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_MsgService_serviceDesc)
 }
+
+// TODO: add MsgWithdraw helpers

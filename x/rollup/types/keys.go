@@ -19,5 +19,6 @@ const (
 	ETH        = "ETH"
 	MintModule = "mint"
 	// KeyL1BlockInfo is the key for the L1BlockInfo
-	KeyL1BlockInfo = "L1BlockInfo"
+	KeyL1BlockInfo  = "L1BlockInfo"
+	KeyWithdrawalDB = "withdrawalDB"
 )
