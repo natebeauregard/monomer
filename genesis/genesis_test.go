@@ -3,6 +3,7 @@ package genesis_test
 import (
 	"context"
 	"encoding/json"
+	"github.com/polymerdao/monomer/testutils"
 	"testing"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -47,8 +48,10 @@ func TestCommit(t *testing.T) {
 				require.NoError(t, blockstoredb.Close())
 			})
 			blockStore := store.NewBlockStore(blockstoredb)
+			ethStateTrie := testutils.NewEthStateTrie(t)
+			ethStateRoot := ethStateTrie.Hash().Bytes()
 
-			require.NoError(t, test.genesis.Commit(context.Background(), app, blockStore))
+			require.NoError(t, test.genesis.Commit(context.Background(), app, blockStore, ethStateRoot))
 
 			info, err := app.Info(context.Background(), &abci.RequestInfo{})
 			require.NoError(t, err)
@@ -69,6 +72,7 @@ func TestCommit(t *testing.T) {
 				Height:   info.GetLastBlockHeight(),
 				Time:     test.genesis.Time,
 				GasLimit: 30_000_000, // We cheat a little and copy the default gas limit here.
+				AppHash:  ethStateRoot,
 			}, nil)
 			require.NoError(t, err)
 			require.Equal(t, block, blockStore.BlockByNumber(info.GetLastBlockHeight()))
