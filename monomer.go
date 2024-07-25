@@ -72,7 +72,7 @@ type Block struct {
 
 // MakeBlock creates a new block. It calculates stateless properties on the header (like the block hash) and resets them.
 // The header must be non-nil. The txs may be nil.
-func MakeBlock(h *Header, txs bfttypes.Txs) (*Block, error) {
+func MakeBlock(h *Header, txs bfttypes.Txs, ethStateTrie *trie.StateTrie) (*Block, error) {
 	block := &Block{
 		Header: h,
 		Txs:    txs,
@@ -81,7 +81,14 @@ func MakeBlock(h *Header, txs bfttypes.Txs) (*Block, error) {
 	if err != nil {
 		return nil, fmt.Errorf("convert block to Ethereum representation: %v", err)
 	}
-	block.Header.Hash = ethBlock.Hash()
+	if ethStateTrie == nil {
+		return nil, fmt.Errorf("nil eth state trie")
+	}
+
+	// The monomer block hash uses the hash of the application state root
+	// and the Ethereum state trie root.
+	monomerHashes := append(ethBlock.Hash().Bytes(), ethStateTrie.Hash().Bytes()...)
+	block.Header.Hash = common.BytesToHash(monomerHashes)
 	return block, nil
 }
 
