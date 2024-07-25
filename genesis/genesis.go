@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/ethereum/go-ethereum/trie"
 	"time"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -22,11 +21,7 @@ type Genesis struct {
 const defaultGasLimit = 30_000_000
 
 // Commit assumes the application has not been initialized and that the block store is empty.
-func (g *Genesis) Commit(
-	ctx context.Context,
-	app monomer.Application,
-	blockStore store.BlockStoreWriter,
-	ethStateTrie *trie.StateTrie) error {
+func (g *Genesis) Commit(ctx context.Context, app monomer.Application, blockStore store.BlockStoreWriter) error {
 	appStateBytes, err := json.Marshal(g.AppState)
 	if err != nil {
 		return fmt.Errorf("marshal app state: %v", err)
@@ -49,7 +44,7 @@ func (g *Genesis) Commit(
 		ChainID:  g.ChainID,
 		Time:     g.Time,
 		GasLimit: defaultGasLimit,
-	}, nil, ethStateTrie)
+	}, nil)
 	if err != nil {
 		return fmt.Errorf("make block: %v", err)
 	}
