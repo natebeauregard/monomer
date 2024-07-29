@@ -8,6 +8,7 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
+	gethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/polymerdao/monomer"
 	"github.com/polymerdao/monomer/app/peptide/store"
 	"github.com/polymerdao/monomer/genesis"
@@ -48,10 +49,9 @@ func TestCommit(t *testing.T) {
 				require.NoError(t, blockstoredb.Close())
 			})
 			blockStore := store.NewBlockStore(blockstoredb)
-			ethStateTrie := testutils.NewEthStateTrie(t)
-			ethStateRoot := ethStateTrie.Hash()
+			ethstatedb := testutils.NewEthStateDB(t)
 
-			require.NoError(t, test.genesis.Commit(context.Background(), app, blockStore, ethStateRoot))
+			require.NoError(t, test.genesis.Commit(context.Background(), app, blockStore, ethstatedb))
 
 			info, err := app.Info(context.Background(), &abci.RequestInfo{})
 			require.NoError(t, err)
@@ -68,11 +68,11 @@ func TestCommit(t *testing.T) {
 
 			// Block store.
 			block, err := monomer.MakeBlock(&monomer.Header{
-				ChainID:  test.genesis.ChainID,
-				Height:   info.GetLastBlockHeight(),
-				Time:     test.genesis.Time,
-				GasLimit: 30_000_000, // We cheat a little and copy the default gas limit here.
-				AppHash:  ethStateRoot.Bytes(),
+				ChainID:   test.genesis.ChainID,
+				Height:    info.GetLastBlockHeight(),
+				Time:      test.genesis.Time,
+				GasLimit:  30_000_000, // We cheat a little and copy the default gas limit here.
+				StateRoot: gethtypes.EmptyRootHash,
 			}, nil)
 			require.NoError(t, err)
 			require.Equal(t, block, blockStore.BlockByNumber(info.GetLastBlockHeight()))

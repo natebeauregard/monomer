@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
 	"time"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
+	"github.com/ethereum/go-ethereum/core/state"
+	gethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/polymerdao/monomer"
 	"github.com/polymerdao/monomer/app/peptide/store"
 )
@@ -22,7 +23,7 @@ type Genesis struct {
 const defaultGasLimit = 30_000_000
 
 // Commit assumes the application has not been initialized and that the block store is empty.
-func (g *Genesis) Commit(ctx context.Context, app monomer.Application, blockStore store.BlockStoreWriter, ethStateRoot common.Hash) error {
+func (g *Genesis) Commit(ctx context.Context, app monomer.Application, blockStore store.BlockStoreWriter, ethstatedb state.Database) error {
 	appStateBytes, err := json.Marshal(g.AppState)
 	if err != nil {
 		return fmt.Errorf("marshal app state: %v", err)
@@ -40,18 +41,19 @@ func (g *Genesis) Commit(ctx context.Context, app monomer.Application, blockStor
 		return fmt.Errorf("init chain: %v", err)
 	}
 
-	block, err := monomer.MakeBlock(&monomer.Header{
+	header := &monomer.Header{
 		Height:   initialHeight,
 		ChainID:  g.ChainID,
 		Time:     g.Time,
 		GasLimit: defaultGasLimit,
-		AppHash:  ethStateRoot.Bytes(),
-	}, nil)
-	if err != nil {
-		return fmt.Errorf("make block: %v", err)
 	}
+	cometHeader := header.ToComet()
+	info, err := app.Info(ctx, &abci.RequestInfo{})
+	if err != nil {
+		return fmt.Errorf("info: %v", err)
+	}
+	cometHeader.AppHash = info.GetLastBlockAppHash()
 
-	cometHeader := block.Header.ToComet()
 	if _, err := app.FinalizeBlock(ctx, &abci.RequestFinalizeBlock{
 		Hash:               cometHeader.Hash(),
 		Height:             cometHeader.Height,
@@ -64,6 +66,24 @@ func (g *Genesis) Commit(ctx context.Context, app monomer.Application, blockStor
 
 	if _, err := app.Commit(ctx, &abci.RequestCommit{}); err != nil {
 		return fmt.Errorf("commit: %v", err)
+	}
+
+	// Create ethereum genesis state.
+	ethState, err := state.New(gethtypes.EmptyRootHash, ethstatedb, nil)
+	if err != nil {
+		return fmt.Errorf("create ethereum state: %v", err)
+	}
+	// TODO: add predeploy contracts to state
+	ethStateRoot, err := ethState.Commit(initialHeight, true)
+	if err != nil {
+		return fmt.Errorf("commit ethereum genesis state: %v", err)
+	}
+
+	// Create monomer block
+	header.StateRoot = ethStateRoot
+	block, err := monomer.MakeBlock(header, nil)
+	if err != nil {
+		return fmt.Errorf("make block: %v", err)
 	}
 
 	blockStore.AddBlock(block)
